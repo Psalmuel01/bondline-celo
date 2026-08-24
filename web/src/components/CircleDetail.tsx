@@ -99,8 +99,8 @@ export function CircleDetail({ address: circleAddress }: { address: `0x${string}
         <>
           {/* circle header */}
           <section className="relative mt-4 flex flex-col gap-5 overflow-hidden rounded-2xl border border-line bg-panel/80 p-5 sm:p-7">
-            {metadata?.banner_url && <img src={metadata.banner_url} alt="" onError={(event) => { event.currentTarget.style.display = "none"; }} className="absolute inset-0 h-full w-full object-cover opacity-20" />}
-            <div className="absolute inset-0 bg-gradient-to-r from-panel via-panel/90 to-panel/55" />
+            {metadata?.banner_url && <img src={metadata.banner_url} alt="" onError={(event) => { event.currentTarget.style.display = "none"; }} className="absolute inset-0 h-full w-full object-cover opacity-55" />}
+            <div className="absolute inset-0 bg-gradient-to-r from-panel/90 via-panel/55 to-panel/20" />
             <div className="flex flex-wrap items-start justify-between gap-4">
               <div className="relative">
                 <h1 className="font-display text-3xl font-semibold tracking-tight text-bone">

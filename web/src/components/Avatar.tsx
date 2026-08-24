@@ -46,12 +46,11 @@ export function Avatar({
         width: size,
         height: size,
         fontSize: size * 0.34,
-        background: showImage ? undefined : cosigned
+        backgroundColor: showImage
           ? undefined
-          : color ?? `hsl(${hue} 30% 20%)`,
-        backgroundColor: cosigned
-          ? `hsl(${hue} 22% 16%)`
-          : undefined,
+          : cosigned
+            ? `hsl(${hue} 22% 16%)`
+            : color ?? `hsl(${hue} 30% 20%)`,
         color: `hsl(${hue} 55% 74%)`,
         boxShadow: ring,
       }}

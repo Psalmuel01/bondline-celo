@@ -31,7 +31,7 @@ export function Footer() {
               How it works
             </Link>
             <a
-              href="https://github.com/Psalmuel01/bondline"
+              href="https://github.com/Psalmuel01/bondline-celo"
               target="_blank"
               rel="noreferrer"
               className="text-muted transition-colors hover:text-gold"
