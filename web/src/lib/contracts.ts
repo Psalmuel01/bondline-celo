@@ -5,13 +5,12 @@
 // Set these in web/.env.local after deploying (see contracts/README):
 //   NEXT_PUBLIC_CIRCLE_FACTORY_ADDRESS=0x…
 //   NEXT_PUBLIC_CORE_ADDRESS=0x…
+import { bondlineConfig } from "./chain";
 
 const ZERO = "0x0000000000000000000000000000000000000000" as const;
 
-export const CIRCLE_FACTORY_ADDRESS = (process.env
-  .NEXT_PUBLIC_CIRCLE_FACTORY_ADDRESS ?? ZERO) as `0x${string}`;
-export const CORE_ADDRESS = (process.env.NEXT_PUBLIC_CORE_ADDRESS ??
-  ZERO) as `0x${string}`;
+export const CIRCLE_FACTORY_ADDRESS = (bondlineConfig.factoryAddress ?? ZERO) as `0x${string}`;
+export const CORE_ADDRESS = (bondlineConfig.coreAddress ?? ZERO) as `0x${string}`;
 
 export const isConfigured =
   CIRCLE_FACTORY_ADDRESS !== ZERO && CORE_ADDRESS !== ZERO;

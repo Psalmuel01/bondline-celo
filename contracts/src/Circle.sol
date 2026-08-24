@@ -12,10 +12,10 @@ import {BondlineMath} from "./BondlineMath.sol";
 ///         mapping.
 ///
 ///         A Circle holds only three things: who's in the group (fixed at
-///         creation), the group's cosign threshold, and the MON Pot that
+///         creation), the group's cosign threshold, and the CELO Pot that
 ///         accumulates from members' crossed Bonds. All value-moving calls are
 ///         gated to the single BondlineCore that orchestrates Bonds and cosigns —
-///         the Circle itself has no opinion on how MON arrives or leaves, which
+///         the Circle itself has no opinion on how CELO arrives or leaves, which
 ///         keeps each clone's attack surface tiny and its state provably isolated
 ///         from every other Circle.
 contract Circle is Initializable {
@@ -56,12 +56,10 @@ contract Circle is Initializable {
     ///         the same tx as the clone deploy. The factory is responsible for
     ///         validating members (>=2, no zero, no duplicates) and the bps
     ///         range; by the time we're here those invariants already hold.
-    function initialize(
-        string calldata name_,
-        address[] calldata members_,
-        uint16 cosignThresholdBps_,
-        address core_
-    ) external initializer {
+    function initialize(string calldata name_, address[] calldata members_, uint16 cosignThresholdBps_, address core_)
+        external
+        initializer
+    {
         core = core_;
         name = name_;
         cosignThresholdBps = cosignThresholdBps_;
@@ -73,7 +71,7 @@ contract Circle is Initializable {
 
     /// @notice Receive a crossed Bond's stake from the core into the shared Pot.
     ///         Value is carried by msg.value; the Pot balance is simply this
-    ///         contract's MON balance, so no separate accounting can desync.
+    ///         contract's CELO balance, so no separate accounting can desync.
     function fundPot() external payable onlyCore {
         emit PotFunded(msg.sender, msg.value, address(this).balance);
     }
@@ -82,7 +80,7 @@ contract Circle is Initializable {
     ///         payout cleared this Circle's threshold before calling; the Pot only
     ///         checks it can cover the amount (implicit in the transfer).
     function payout(address to, uint256 amount) external onlyCore {
-        (bool ok, ) = payable(to).call{value: amount}("");
+        (bool ok,) = payable(to).call{value: amount}("");
         if (!ok) revert TransferFailed();
         emit PayoutPaid(to, amount, address(this).balance);
     }

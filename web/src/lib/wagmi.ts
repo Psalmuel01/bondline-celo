@@ -1,12 +1,13 @@
 import { createConfig, http } from "wagmi";
 import { injected } from "wagmi/connectors";
-import { monadMainnet } from "./chain";
+import { celoMainnetChain, celoSepoliaChain } from "./chain";
 
 export const wagmiConfig = createConfig({
-  chains: [monadMainnet],
+  chains: [celoSepoliaChain, celoMainnetChain],
   connectors: [injected()],
   transports: {
-    [monadMainnet.id]: http(),
+    [celoSepoliaChain.id]: http(),
+    [celoMainnetChain.id]: http(),
   },
   ssr: true,
 });

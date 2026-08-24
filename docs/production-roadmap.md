@@ -39,7 +39,7 @@ This roadmap turns the hackathon build into a production system without replacin
 
 ## Deployment order for the secure chat slice
 
-1. Configure `SUPABASE_SERVICE_ROLE_KEY`, `BONDLINE_SESSION_SECRET`, and `MONAD_RPC_URL` in the hosting environment.
+1. Configure `SUPABASE_SERVICE_ROLE_KEY`, `BONDLINE_SESSION_SECRET`, and `CELO_RPC_URL` in the hosting environment.
 2. Deploy the web application containing the authenticated API routes.
 3. Run `supabase/migrations/202608130001_secure_circle_chat.sql`, then `202608130002_secure_social_writes.sql`.
 4. Verify that a member can unlock chat and a non-member receives HTTP 403.

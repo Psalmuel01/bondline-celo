@@ -1,0 +1,14 @@
+const fs = require("node:fs");
+const { execFileSync } = require("node:child_process");
+const chainId = process.env.CHAIN_ID;
+const rpcAlias = process.env.RPC_ALIAS;
+const run = JSON.parse(fs.readFileSync(`broadcast/Deploy.s.sol/${chainId}/run-latest.json`, "utf8"));
+const tx = (name) => run.transactions.find((item) => item.contractName === name);
+const core = tx("BondlineCore").contractAddress;
+const circle = tx("Circle").contractAddress;
+const factory = tx("CircleFactory").contractAddress;
+const verify = (address, contract, args) => execFileSync("forge", ["verify-contract", address, contract, "--chain", chainId, "--rpc-url", rpcAlias, ...(args ? ["--constructor-args", args] : [])], { stdio: "inherit" });
+verify(circle, "src/Circle.sol:Circle");
+verify(core, "src/BondlineCore.sol:BondlineCore");
+const args = execFileSync("cast", ["abi-encode", "constructor(address,address)", core, circle], { encoding: "utf8" }).trim();
+verify(factory, "src/CircleFactory.sol:CircleFactory", args);

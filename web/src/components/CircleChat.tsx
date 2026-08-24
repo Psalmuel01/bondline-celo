@@ -7,6 +7,7 @@ import type { Circle } from "@/lib/contracts";
 import { shortAddr } from "@/lib/format";
 import { getMessages, isSupabaseConfigured, sendMessage } from "@/lib/supabase";
 import { useWalletSession } from "@/lib/useWalletSession";
+import { ACTIVE_CHAIN_ID } from "@/lib/chain";
 
 export function CircleChat({ circle, names }: { circle: Circle; names: Record<string, string> }) {
   const { address } = useAccount();
@@ -17,7 +18,7 @@ export function CircleChat({ circle, names }: { circle: Circle; names: Record<st
   const isMember = !!address && circle.members.some((member) => member.toLowerCase() === address.toLowerCase());
   const queryClient = useQueryClient();
   const { data: messages = [], isLoading } = useQuery({
-    queryKey: ["circle-messages", circle.address.toLowerCase()],
+    queryKey: ["circle-messages", ACTIVE_CHAIN_ID, circle.address.toLowerCase()],
     queryFn: () => getMessages(circle.address),
     // Do not request or retain a Circle's discussion for a visitor who is not
     // a member. The locked state below deliberately contains no message data.
@@ -27,7 +28,7 @@ export function CircleChat({ circle, names }: { circle: Circle; names: Record<st
 
   useEffect(() => {
     if (!isMember) {
-      queryClient.removeQueries({ queryKey: ["circle-messages", circle.address.toLowerCase()] });
+      queryClient.removeQueries({ queryKey: ["circle-messages", ACTIVE_CHAIN_ID, circle.address.toLowerCase()] });
       setBody("");
     }
   }, [circle.address, isMember, queryClient]);
@@ -39,7 +40,7 @@ export function CircleChat({ circle, names }: { circle: Circle; names: Record<st
     try {
       await sendMessage(circle.address, address, body);
       setBody("");
-      await queryClient.invalidateQueries({ queryKey: ["circle-messages", circle.address.toLowerCase()] });
+      await queryClient.invalidateQueries({ queryKey: ["circle-messages", ACTIVE_CHAIN_ID, circle.address.toLowerCase()] });
     }
     catch (cause) { setError(cause instanceof Error ? cause.message : "Couldn’t send message."); }
     finally { setSending(false); }

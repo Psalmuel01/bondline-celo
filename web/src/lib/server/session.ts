@@ -3,7 +3,7 @@ import "server-only";
 import { createHmac, randomBytes, timingSafeEqual } from "node:crypto";
 import { cookies } from "next/headers";
 import { getAddress, isAddress, verifyMessage } from "viem";
-import { monadMainnet } from "@/lib/chain";
+import { ACTIVE_CHAIN_ID } from "@/lib/chain";
 
 const NONCE_COOKIE = "bondline_nonce";
 const SESSION_COOKIE = "bondline_session";
@@ -11,7 +11,7 @@ const NONCE_TTL_SECONDS = 5 * 60;
 const SESSION_TTL_SECONDS = 7 * 24 * 60 * 60;
 
 type NoncePayload = { address: `0x${string}`; nonce: string; origin: string; expiresAt: number };
-export type WalletSession = { address: `0x${string}`; expiresAt: number };
+export type WalletSession = { address: `0x${string}`; chainId: number; expiresAt: number };
 
 function secret() {
   const value = process.env.BONDLINE_SESSION_SECRET;
@@ -57,7 +57,7 @@ function messageFor(payload: NoncePayload) {
     "",
     `URI: ${payload.origin}`,
     "Version: 1",
-    `Chain ID: ${monadMainnet.id}`,
+    `Chain ID: ${ACTIVE_CHAIN_ID}`,
     `Nonce: ${payload.nonce}`,
     `Expiration Time: ${new Date(payload.expiresAt).toISOString()}`,
   ].join("\n");
@@ -94,6 +94,7 @@ export async function verifyChallenge(address: string, message: string, signatur
 
   const session: WalletSession = {
     address: payload.address,
+    chainId: ACTIVE_CHAIN_ID,
     expiresAt: Date.now() + SESSION_TTL_SECONDS * 1000,
   };
   store.set(SESSION_COOKIE, seal(session), {
@@ -109,7 +110,7 @@ export async function verifyChallenge(address: string, message: string, signatur
 export async function getWalletSession() {
   const store = await cookies();
   const session = unseal<WalletSession>(store.get(SESSION_COOKIE)?.value);
-  if (!session || session.expiresAt <= Date.now()) return;
+  if (!session || session.expiresAt <= Date.now() || session.chainId !== ACTIVE_CHAIN_ID) return;
   return session;
 }
 

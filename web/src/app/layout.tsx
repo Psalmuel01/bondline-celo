@@ -27,7 +27,7 @@ export const metadata: Metadata = {
   metadataBase: new URL("https://bondline.app"),
   title: "Bondline — ship together, or fund together",
   description:
-    "A group commitment protocol on Monad. Stake MON against your own deadline. Beat the Line and your Circle cosigns the refund; cross it and your stake drops into the shared Pot.",
+    "A group commitment protocol on Celo. Stake CELO against your own deadline. Beat the Line and your Circle cosigns the refund; cross it and your stake drops into the shared Pot.",
   icons: { icon: "/logo.svg" },
   openGraph: {
     title: "Bondline - ship together, or fund the group chat",

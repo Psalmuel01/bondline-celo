@@ -7,7 +7,7 @@ import { Footer } from "@/components/Footer";
 export const metadata: Metadata = {
   title: "How Bondline works",
   description:
-    "The mechanic, the vocabulary, and the on-chain guarantees behind Bondline — a group commitment protocol on Monad.",
+    "The mechanic, the vocabulary, and the on-chain guarantees behind Bondline — a group commitment protocol on Celo.",
 };
 
 /// Static docs page. Plain, a little wry, matches the brand voice. Explains the
@@ -33,7 +33,7 @@ export default function DocsPage() {
             in a minute.
           </p>
           <div className="relative mt-8 grid max-w-2xl gap-3 sm:grid-cols-3">
-            <QuickFact label="You stake" value="MON on a deadline" />
+            <QuickFact label="You stake" value="CELO on a deadline" />
             <QuickFact label="They decide" value="with a cosign" />
             <QuickFact label="The outcome" value="refund or Pot" />
           </div>
@@ -42,7 +42,7 @@ export default function DocsPage() {
         <Section title="The one-minute version">
           <p>
             You and your friends form a <Term>Circle</Term>. Each of you stakes
-            MON against a personal deadline — that&apos;s a <Term>Bond</Term>.
+            CELO against a personal deadline — that&apos;s a <Term>Bond</Term>.
             When you&apos;re done, you declare it and drop your{" "}
             <Term>Receipts</Term>. Your Circle gets a window to{" "}
             <Term>cosign</Term> whether it actually happened. Clear the bar your
@@ -62,7 +62,7 @@ export default function DocsPage() {
               else&apos;s.
             </Step>
             <Step n={2} title="Stake a Bond">
-              Put MON on a deadline you care about — ship the feature, run the
+              Put CELO on a deadline you care about — ship the feature, run the
               10k, send the invoices. The stake is escrowed on-chain the moment
               you sign. The clock is now public.
             </Step>
@@ -165,7 +165,7 @@ export default function DocsPage() {
         <div className="mt-6 rounded-xl border border-gold/25 bg-gold/5 p-5 text-sm text-muted">
           <p className="text-bone">A note on the build.</p>
           <p className="mt-1.5">
-            Bondline runs on Monad testnet with test MON. It hasn&apos;t been
+            Bondline runs on Celo testnet with test CELO. It hasn&apos;t been
             audited — treat it as a hackathon build, not a place for money you
             can&apos;t afford to lose to a bug.
           </p>
@@ -184,12 +184,12 @@ export default function DocsPage() {
             Start a Circle
           </Link>
           <a
-            href="https://faucet.monad.xyz"
+            href="https://faucet.celo.org/celo-sepolia"
             target="_blank"
             rel="noreferrer"
             className="rounded-lg border border-line px-5 py-2.5 text-sm font-medium text-bone transition hover:border-panel-hi"
           >
-            Grab testnet MON ↗
+            Grab testnet CELO ↗
           </a>
         </div>
       </article>

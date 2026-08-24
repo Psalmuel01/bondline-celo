@@ -9,7 +9,7 @@ import {
   type Hash,
   type Log,
 } from "viem";
-import { monadMainnet } from "@/lib/chain";
+import { activeChain, bondlineConfig } from "@/lib/chain";
 import {
   CIRCLE_FACTORY_ADDRESS,
   CORE_ADDRESS,
@@ -19,8 +19,8 @@ import {
 } from "@/lib/contracts";
 import { supabaseAdminRequest } from "@/lib/server/supabase-admin";
 
-const DEFAULT_DEPLOYMENT_BLOCK = 88_718_941n;
-const DEFAULT_FINALITY_BLOCKS = 20n;
+const DEFAULT_DEPLOYMENT_BLOCK = BigInt(bondlineConfig.deploymentBlock);
+const DEFAULT_FINALITY_BLOCKS = BigInt(bondlineConfig.finalityBlocks);
 const DEFAULT_BLOCK_RANGE = 2_000n;
 const DEFAULT_HYPERSYNC_BLOCK_RANGE = 2_000_000n;
 const DEFAULT_LOG_RANGE = 100n;
@@ -115,7 +115,7 @@ async function mapConcurrent<T, R>(items: readonly T[], concurrency: number, wor
 }
 
 async function getLogsInRanges(
-  client: ReturnType<typeof createPublicClient>,
+  client: Pick<ReturnType<typeof createPublicClient>, "getLogs">,
   address: Address,
   fromBlock: bigint,
   toBlock: bigint,
@@ -133,8 +133,8 @@ async function getLogsInRanges(
 
 async function getLogsFromHyperSync(fromBlock: bigint, toBlock: bigint) {
   const token = process.env.HYPERSYNC_BEARER_TOKEN;
-  if (!token) return;
-  const endpoint = (process.env.BONDLINE_HYPERSYNC_URL ?? "https://monad.hypersync.xyz").replace(/\/$/, "");
+  if (!token || bondlineConfig.indexer.mode !== "hypersync") return;
+  const endpoint = (process.env.BONDLINE_HYPERSYNC_URL ?? bondlineConfig.indexer.hyperSyncUrl).replace(/\/$/, "");
   const logs: Log<bigint, number, false>[] = [];
   let cursor = fromBlock;
 
@@ -203,22 +203,23 @@ function decodeLogs(logs: readonly Log<bigint, number, false>[], abi: typeof cor
 
 export async function runIndexerBatch(): Promise<IndexerRunResult> {
   if (!isConfigured) throw new Error("The Core and CircleFactory addresses are not configured.");
-  const rpcUrl = process.env.MONAD_RPC_URL;
-  if (!rpcUrl) throw new Error("MONAD_RPC_URL is required by the indexer.");
+  const rpcUrl = process.env.CELO_RPC_URL;
+  if (!rpcUrl) throw new Error("CELO_RPC_URL is required by the indexer.");
 
   const deploymentBlock = positiveBigInt("BONDLINE_DEPLOYMENT_BLOCK", DEFAULT_DEPLOYMENT_BLOCK);
   const finalityBlocks = positiveBigInt("BONDLINE_INDEXER_FINALITY_BLOCKS", DEFAULT_FINALITY_BLOCKS);
-  const blockRange = process.env.HYPERSYNC_BEARER_TOKEN
+  const useHyperSync = bondlineConfig.indexer.mode === "hypersync" && Boolean(process.env.HYPERSYNC_BEARER_TOKEN);
+  const blockRange = useHyperSync
     ? positiveBigInt("BONDLINE_INDEXER_HYPERSYNC_BLOCK_RANGE", DEFAULT_HYPERSYNC_BLOCK_RANGE)
     : positiveBigInt("BONDLINE_INDEXER_BLOCK_RANGE", DEFAULT_BLOCK_RANGE);
   const logRange = positiveBigInt("BONDLINE_INDEXER_LOG_RANGE", DEFAULT_LOG_RANGE);
   const client = createPublicClient({
-    chain: monadMainnet,
+    chain: activeChain,
     transport: http(rpcUrl, { retryCount: 3, timeout: 20_000 }),
   });
 
   const syncRows = await supabaseAdminRequest<SyncRow[]>(
-    `chain_sync_state?select=deployment_block,last_finalized_block,last_finalized_hash&chain_id=eq.${monadMainnet.id}&limit=1`,
+    `chain_sync_state?select=deployment_block,last_finalized_block,last_finalized_hash&chain_id=eq.${activeChain.id}&limit=1`,
   );
   const sync = syncRows[0];
   if (sync && BigInt(sync.deployment_block) !== deploymentBlock) {
@@ -268,8 +269,8 @@ export async function runIndexerBatch(): Promise<IndexerRunResult> {
   ].sort((a, b) => Number(a.log.blockNumber - b.log.blockNumber) || Number((a.log.logIndex ?? 0) - (b.log.logIndex ?? 0)));
 
   const [indexedBonds, indexedPayouts] = await Promise.all([
-    supabaseAdminRequest<IndexedEntityCircle[]>("indexed_bonds?select=bond_id,circle_address"),
-    supabaseAdminRequest<IndexedPayoutCircle[]>("indexed_payouts?select=payout_id,circle_address"),
+    supabaseAdminRequest<IndexedEntityCircle[]>(`indexed_bonds?select=bond_id,circle_address&chain_id=eq.${activeChain.id}`),
+    supabaseAdminRequest<IndexedPayoutCircle[]>(`indexed_payouts?select=payout_id,circle_address&chain_id=eq.${activeChain.id}`),
   ]);
   const bondCircles = new Map(indexedBonds.map((bond) => [String(bond.bond_id), bond.circle_address]));
   const payoutCircles = new Map(indexedPayouts.map((payout) => [String(payout.payout_id), payout.circle_address]));
@@ -304,7 +305,7 @@ export async function runIndexerBatch(): Promise<IndexerRunResult> {
     const circleAddress = directCircle ?? (bondId ? bondCircles.get(bondId) : undefined) ?? (payoutId ? payoutCircles.get(payoutId) : undefined) ?? null;
     const actor = [args.creator, args.cosigner, args.objector, args.member].find((value) => typeof value === "string" && isAddress(value));
     return {
-      chain_id: monadMainnet.id,
+      chain_id: activeChain.id,
       tx_hash: log.transactionHash.toLowerCase(),
       log_index: log.logIndex,
       block_number: log.blockNumber.toString(),
@@ -328,7 +329,7 @@ export async function runIndexerBatch(): Promise<IndexerRunResult> {
   }>("rpc/apply_chain_event_batch", {
     method: "POST",
     body: JSON.stringify({
-      p_chain_id: monadMainnet.id,
+      p_chain_id: activeChain.id,
       p_deployment_block: deploymentBlock.toString(),
       p_from_block: fromBlock.toString(),
       p_last_finalized_block: throughBlock.toString(),

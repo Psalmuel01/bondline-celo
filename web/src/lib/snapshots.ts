@@ -1,6 +1,7 @@
 import { isAddress } from "viem";
 import { Status, type Bond, type Circle, type Payout } from "./contracts";
 import type { Activity, CircleMetadata, ProfileRow } from "./supabase";
+import { ACTIVE_CHAIN_ID } from "./chain";
 
 type Numeric = string | number;
 
@@ -38,6 +39,7 @@ type IndexedPayoutRow = {
 };
 
 export type ChainActivityRow = {
+  chain_id: number;
   tx_hash: string;
   log_index: number;
   event_name: string;
@@ -80,8 +82,8 @@ export type CircleSnapshot = DashboardSnapshot & {
   activity: Activity[];
 };
 
-export const dashboardSnapshotKey = ["indexed-dashboard-snapshot"] as const;
-export const circleSnapshotKey = (address: string) => ["indexed-circle-snapshot", address.toLowerCase()] as const;
+export const dashboardSnapshotKey = ["indexed-dashboard-snapshot", ACTIVE_CHAIN_ID] as const;
+export const circleSnapshotKey = (address: string) => ["indexed-circle-snapshot", ACTIVE_CHAIN_ID, address.toLowerCase()] as const;
 
 function asAddress(value: unknown): `0x${string}` {
   if (typeof value !== "string" || !isAddress(value)) throw new Error("The indexed snapshot contains an invalid address.");
@@ -161,6 +163,7 @@ function eventBody(event: ChainActivityRow) {
 function toActivity(event: ChainActivityRow): Activity {
   return {
     id: `${event.tx_hash}:${event.log_index}`,
+    chain_id: event.chain_id,
     circle_address: event.circle_address ?? "",
     actor_address: event.actor_address,
     kind: event.event_name,

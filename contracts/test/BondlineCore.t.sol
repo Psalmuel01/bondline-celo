@@ -58,7 +58,7 @@ contract BondlineCoreTest is Test {
     }
 
     function _status(uint256 id) internal view returns (BondlineCore.Status s) {
-        (, , , , , s, , , , , ) = core.bonds(id);
+        (,,,,, s,,,,,) = core.bonds(id);
     }
 
     // --- wiring ---

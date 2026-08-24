@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Logo } from "./Logo";
+import { activeChain } from "@/lib/chain";
 
 /// Standard site footer. Keeps the brand voice — plain, a little wry — and
 /// gathers the few real links the product has.
@@ -41,14 +42,14 @@ export function Footer() {
           <div className="flex flex-col gap-2">
             <span className="text-[11px] uppercase tracking-widest text-faint">Chain</span>
             <a
-              href="https://monadscan.com"
+              href={activeChain.blockExplorers.default.url}
               target="_blank"
               rel="noreferrer"
               className="text-muted transition-colors hover:text-gold"
             >
               Explorer ↗
             </a>
-            <span className="tnum text-faint">chain 143</span>
+            <span className="tnum text-faint">chain {activeChain.id}</span>
 
           </div>
           <div className="flex flex-col gap-2">
@@ -59,15 +60,15 @@ export function Footer() {
               rel="noreferrer"
               className="text-muted transition-colors hover:text-gold"
             >
-              Spark on Monad ↗
+              Spark on Celo ↗
             </a>
           </div>
         </div>
       </div>
 
       <p className="tnum mt-8 text-[11px] text-faint">
-        Bondline · every Circle its own vault, isolated on-chain · Monad mainnet,
-        real MON, not audited
+        Bondline · every Circle its own vault, isolated on-chain · {activeChain.name},
+        real CELO, not audited
       </p>
     </footer>
   );

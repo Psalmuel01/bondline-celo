@@ -10,6 +10,7 @@ import { getMessages, isSupabaseConfigured } from "@/lib/supabase";
 import { circleSnapshotKey, getCircleSnapshot } from "@/lib/snapshots";
 import { Avatar } from "./Avatar";
 import { useWalletSession } from "@/lib/useWalletSession";
+import { ACTIVE_CHAIN_ID } from "@/lib/chain";
 
 /// One Circle tile on the dashboard. Surfaces the numbers that matter at a
 /// glance: the Pot balance, live/cosigning count, and whether it's your turn to
@@ -43,7 +44,7 @@ export function CircleCard({
     if (!isSupabaseConfigured) return;
     const circleKey = circle.address.toLowerCase();
     void queryClient.prefetchQuery({ queryKey: circleSnapshotKey(circle.address), queryFn: () => getCircleSnapshot(circle.address) });
-    if (isMember && isAuthenticated) void queryClient.prefetchQuery({ queryKey: ["circle-messages", circleKey], queryFn: () => getMessages(circle.address) });
+    if (isMember && isAuthenticated) void queryClient.prefetchQuery({ queryKey: ["circle-messages", ACTIVE_CHAIN_ID, circleKey], queryFn: () => getMessages(circle.address) });
   }
 
   return (
@@ -74,7 +75,7 @@ export function CircleCard({
           <div className="text-[10px] uppercase tracking-widest text-faint">The Pot</div>
           <div className="tnum text-2xl font-semibold text-bone">
             {formatMon(circle.balance)}
-            <span className="ml-1 text-sm text-muted">MON</span>
+            <span className="ml-1 text-sm text-muted">CELO</span>
           </div>
         </div>
         <div className="flex -space-x-2">

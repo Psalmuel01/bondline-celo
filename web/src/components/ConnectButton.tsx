@@ -2,12 +2,12 @@
 
 import { useEffect, useRef } from "react";
 import { useAccount, useConnect, useDisconnect, useSwitchChain } from "wagmi";
-import { monadMainnet } from "@/lib/chain";
+import { activeChain } from "@/lib/chain";
 import { shortAddr } from "@/lib/format";
 
 export function ConnectButton() {
   // useAccount().chainId reflects the wallet's *actual* network. useChainId()
-  // reports the config's chain (only Monad is configured), so it can't detect
+  // reports the config's chain (only Celo is configured), so it can't detect
   // a wallet sitting on the wrong chain — that was why no switch prompt showed.
   const { address, isConnected, chainId } = useAccount();
   const { connect, connectors, isPending } = useConnect();
@@ -15,7 +15,7 @@ export function ConnectButton() {
   const { switchChain, isPending: isSwitching } = useSwitchChain();
 
   const injected = connectors.find((c) => c.type === "injected") ?? connectors[0];
-  const wrongChain = isConnected && chainId !== undefined && chainId !== monadMainnet.id;
+  const wrongChain = isConnected && chainId !== undefined && chainId !== activeChain.id;
 
   // As soon as we detect the wrong network, prompt the wallet to switch — the
   // user shouldn't have to notice the button and click it themselves. Guarded
@@ -24,7 +24,7 @@ export function ConnectButton() {
   useEffect(() => {
     if (wrongChain && chainId !== undefined && promptedFor.current !== chainId) {
       promptedFor.current = chainId;
-      switchChain({ chainId: monadMainnet.id });
+      switchChain({ chainId: activeChain.id });
     }
     if (!wrongChain) promptedFor.current = undefined;
   }, [wrongChain, chainId, switchChain]);
@@ -44,11 +44,11 @@ export function ConnectButton() {
   if (wrongChain) {
     return (
       <button
-        onClick={() => switchChain({ chainId: monadMainnet.id })}
+        onClick={() => switchChain({ chainId: activeChain.id })}
         disabled={isSwitching}
         className="rounded-md border border-forfeit/50 bg-forfeit/10 px-4 py-2 text-sm font-medium text-forfeit transition hover:bg-forfeit/20 disabled:opacity-60"
       >
-        {isSwitching ? "Switching…" : "Wrong network — switch to Monad"}
+        {isSwitching ? "Switching…" : "Wrong network — switch to Celo"}
       </button>
     );
   }

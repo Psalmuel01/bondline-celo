@@ -1,6 +1,6 @@
 # Bondline web
 
-Bondline is a group commitment app on Monad mainnet. A Circle stakes MON against
+Bondline is a group commitment app on Celo mainnet. A Circle stakes CELO against
 personal deadlines: meet the Line and the Circle cosigns a refund; miss it and
 the stake funds the shared Pot.
 
@@ -35,7 +35,7 @@ Open [http://localhost:3000](http://localhost:3000).
 
 ### Environment variables
 
-Set the deployed Monad testnet contract addresses:
+Set the deployed Celo testnet contract addresses:
 
 ```env
 NEXT_PUBLIC_CORE_ADDRESS=0xyour_deployed_core_address
@@ -53,7 +53,7 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
 # Server-only values used by wallet-authenticated private features
 SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
 BONDLINE_SESSION_SECRET=replace-with-at-least-32-random-characters
-MONAD_RPC_URL=https://rpc.monad.xyz
+CELO_RPC_URL=https://forno.celo-sepolia.celo-testnet.org
 BONDLINE_INDEXER_SECRET=replace-with-another-32-random-characters
 HYPERSYNC_BEARER_TOKEN=your-envio-hypersync-token
 ```
@@ -62,7 +62,7 @@ Restart `npm run dev` after changing `.env.local`.
 
 ## Product walkthrough
 
-1. Connect an injected wallet on Monad testnet.
+1. Connect an injected wallet on Celo testnet.
 2. Click **New Circle** and add at least one other member wallet.
 3. Open the Circle and click your own name to add a profile name, avatar URL,
    or avatar color.
@@ -105,7 +105,7 @@ Vercel Cron may instead use its standard server-only `CRON_SECRET`; the route
 accepts either secret.
 The default deployment block is `88718941`, finality lag is 20 blocks, and each
 database batch covers 2,000 blocks. RPC log reads are automatically split into
-100-block requests to respect Monad's public endpoint limit. A server-side Envio
+100-block requests to respect Celo's public endpoint limit. A server-side Envio
 HyperSync token is strongly recommended for the initial backfill: it advances up
 to 2,000,000 blocks per database batch, skips empty blocks, and returns only
 matching contract events. Without a token, the same backfill remains correct but
@@ -138,4 +138,4 @@ snapshots use canonical chain events instead.
 npm run build
 ```
 
-The app targets Monad mainnet and is not audited.
+The app targets Celo mainnet and is not audited.

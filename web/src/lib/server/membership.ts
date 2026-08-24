@@ -2,11 +2,11 @@ import "server-only";
 
 import { createPublicClient, http, isAddress } from "viem";
 import { circleAbi } from "@/lib/contracts";
-import { monadMainnet } from "@/lib/chain";
+import { activeChain } from "@/lib/chain";
 
 const client = createPublicClient({
-  chain: monadMainnet,
-  transport: http(process.env.MONAD_RPC_URL),
+  chain: activeChain,
+  transport: http(process.env.CELO_RPC_URL),
 });
 
 export async function isCircleMember(circleAddress: string, walletAddress: `0x${string}`) {

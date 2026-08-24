@@ -18,11 +18,7 @@ library BondlineMath {
     /// @dev ceil(eligibleCosigners * bps / 10000) = (e*bps + 9999) / 10000.
     ///      eligibleCosigners is bounded by Circle size (validated small on
     ///      creation), so e*bps cannot overflow uint256.
-    function requiredCosigns(uint256 eligibleCosigners, uint16 bps)
-        internal
-        pure
-        returns (uint256)
-    {
+    function requiredCosigns(uint256 eligibleCosigners, uint16 bps) internal pure returns (uint256) {
         uint256 needed = (eligibleCosigners * bps + (BPS_DENOMINATOR - 1)) / BPS_DENOMINATOR;
         return needed == 0 ? 1 : needed;
     }

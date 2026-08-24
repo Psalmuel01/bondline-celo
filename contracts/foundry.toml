@@ -5,16 +5,13 @@ libs = ["lib"]
 solc = "0.8.24"
 optimizer = true
 optimizer_runs = 200
-chain_id = 143
+chain_id = 11142220
 
 [rpc_endpoints]
-monad_testnet = "https://testnet-rpc.monad.xyz"
-monad_mainnet = "https://rpc.monad.xyz"
+celo_sepolia = "https://forno.celo-sepolia.celo-testnet.org"
+celo_mainnet = "https://forno.celo.org"
 
-# MonadVision uses Sourcify for verification on testnet (chain 10143).
-# Deploy + verify:
-#   forge script script/Deploy.s.sol --rpc-url monad_testnet --broadcast \
-#     --verify --verifier sourcify --verifier-url https://sourcify-api-monad.blockvision.org/
+# Celo explorers expose Etherscan-compatible verification APIs.
 [etherscan]
-monad_testnet = { key = "unused", chain = 10143, url = "https://sourcify-api-monad.blockvision.org/" }
-monad_mainnet = { key = "unused", url = "https://sourcify-api-monad.blockvision.org/" }
+celo_sepolia = { key = "${CELOSCAN_API_KEY}", chain = 11142220, url = "https://api-sepolia.celoscan.io/api" }
+celo_mainnet = { key = "${CELOSCAN_API_KEY}", chain = 42220, url = "https://api.celoscan.io/api" }

@@ -42,7 +42,7 @@ export function PayoutList({
           <div className="flex items-center justify-between">
             <span className="text-sm text-bone">{p.memo}</span>
             <span className="tnum text-sm font-semibold text-gold">
-              {formatMon(p.amount)} MON
+              {formatMon(p.amount)} CELO
             </span>
           </div>
           <div className="tnum flex items-center justify-between text-xs text-muted">

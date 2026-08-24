@@ -44,7 +44,7 @@ function CosignDemo() {
         <div>
           <p className="tnum text-[10px] font-semibold uppercase tracking-[0.18em] text-gold">Try the mechanic</p>
           <h2 className="font-display mt-2 text-2xl font-semibold tracking-tight text-bone">Cosign Sam&apos;s Bond.</h2>
-          <p className="mt-2 text-sm leading-relaxed text-muted">Sam staked <span className="tnum text-bone">50 MON</span> to ship by Friday. The crew decides if it counts.</p>
+          <p className="mt-2 text-sm leading-relaxed text-muted">Sam staked <span className="tnum text-bone">50 CELO</span> to ship by Friday. The crew decides if it counts.</p>
         </div>
         <div className="flex flex-col gap-4 rounded-xl border border-line bg-bg/60 p-4 sm:min-w-[320px]">
           <div className="flex items-center justify-between">
@@ -95,9 +95,9 @@ function GlobalTicker() {
   return (
     <section className="border-y border-line py-4">
       <div className="flex flex-wrap items-center justify-center gap-x-3 gap-y-1 text-center text-xs text-muted sm:text-sm">
-        <span className="flex items-center gap-2"><span className="h-1.5 w-1.5 rounded-full bg-gold pulse" /><span className="tnum text-bone">{formatMon(staked)} MON</span> staked across <span className="tnum text-bone">{circles.length}</span> Circles</span>
+        <span className="flex items-center gap-2"><span className="h-1.5 w-1.5 rounded-full bg-gold pulse" /><span className="tnum text-bone">{formatMon(staked)} CELO</span> staked across <span className="tnum text-bone">{circles.length}</span> Circles</span>
         <span className="hidden text-faint sm:inline">·</span>
-        <span><span className="tnum text-bone">{formatMon(pots)} MON</span> sitting in Circle Pots</span>
+        <span><span className="tnum text-bone">{formatMon(pots)} CELO</span> sitting in Circle Pots</span>
       </div>
       <div className="mt-4"><ActivityFeed bonds={bonds} names={names} /></div>
     </section>
@@ -107,10 +107,10 @@ function GlobalTicker() {
 function ActivityFeed({ bonds, names }: { bonds: Bond[]; names: Record<string, string> }) {
   const items = [...bonds].reverse().slice(0, 3).map((bond) => {
     const person = names[bond.creator.toLowerCase()] || shortAddr(bond.creator);
-    if (bond.status === Status.Met) return { text: `${person} cleared a Bond`, note: `${formatMon(bond.stake)} MON refunded`, tone: "text-confirm" };
-    if (bond.status === Status.Crossed) return { text: `${person} crossed the Line`, note: `${formatMon(bond.stake)} MON into the Pot`, tone: "text-forfeit" };
+    if (bond.status === Status.Met) return { text: `${person} cleared a Bond`, note: `${formatMon(bond.stake)} CELO refunded`, tone: "text-confirm" };
+    if (bond.status === Status.Crossed) return { text: `${person} crossed the Line`, note: `${formatMon(bond.stake)} CELO into the Pot`, tone: "text-forfeit" };
     if (bond.status === Status.PendingCosign) return { text: `${person} asked the Circle`, note: "Bond is cosigning now", tone: "text-gold" };
-    return { text: `${person} opened a Bond`, note: `${formatMon(bond.stake)} MON on the Line`, tone: "text-gold" };
+    return { text: `${person} opened a Bond`, note: `${formatMon(bond.stake)} CELO on the Line`, tone: "text-gold" };
   });
   return (
     <section className="overflow-hidden rounded-xl border border-line bg-panel">
@@ -135,9 +135,9 @@ export function LandingExperience() {
     <>
       <section className="grid items-center gap-10 py-14 sm:py-20 lg:grid-cols-[1.08fr_0.92fr]">
         <div>
-          <span className="tnum inline-flex items-center gap-2 rounded-full border border-line px-3 py-1 text-[11px] tracking-wide text-muted"><span className="h-1.5 w-1.5 rounded-full bg-gold pulse" />MONEY ON THE LINE · YOUR CREW DECIDES</span>
+          <span className="tnum inline-flex items-center gap-2 rounded-full border border-line px-3 py-1 text-[11px] tracking-wide text-muted"><span className="h-1.5 w-1.5 rounded-full bg-gold pulse" />CELOEY ON THE LINE · YOUR CREW DECIDES</span>
           <h1 className="font-display mt-6 max-w-3xl text-4xl font-semibold leading-[1.05] tracking-tight sm:text-6xl">Ship together,<br /><span className="text-gold">or fund the group chat.</span></h1>
-          <p className="mt-6 max-w-xl text-[15px] leading-relaxed text-muted sm:text-base">Start a Circle with your friends. Stake MON on your deadline. Your crew cosigns whether you actually shipped. Beat the Line → your money back. Cross it → your money buys the group dinner.</p>
+          <p className="mt-6 max-w-xl text-[15px] leading-relaxed text-muted sm:text-base">Start a Circle with your friends. Stake CELO on your deadline. Your crew cosigns whether you actually shipped. Beat the Line → your money back. Cross it → your money buys the group dinner.</p>
           <div className="mt-8 flex flex-wrap items-center gap-3">
             <a href="#circles" className="rounded-lg bg-gold px-5 py-2.5 text-sm font-semibold text-ink transition hover:brightness-108">Start a Circle</a>
             <Link href="/docs" className="rounded-lg border border-line px-5 py-2.5 text-sm font-medium text-bone transition hover:border-panel-hi">How it works</Link>
@@ -152,7 +152,7 @@ export function LandingExperience() {
       <section className="grid gap-4 py-14 sm:grid-cols-3">
         {[
           ["01", "Make a Circle", "Pick your crew and agree on the cosign bar."],
-          ["02", "Put MON on the Line", "Stake against a deadline that actually matters."],
+          ["02", "Put CELO on the Line", "Stake against a deadline that actually matters."],
           ["03", "Let the crew decide", "Cosigns refund you. Misses build the Pot."],
         ].map(([number, title, copy]) => (
           <div key={number} className="rounded-xl border border-line bg-panel p-5"><span className="tnum text-xs text-gold">{number}</span><h2 className="font-display mt-5 text-lg font-semibold text-bone">{title}</h2><p className="mt-2 text-sm leading-relaxed text-muted">{copy}</p></div>

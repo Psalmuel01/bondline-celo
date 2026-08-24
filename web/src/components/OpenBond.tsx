@@ -12,7 +12,7 @@ const PRESETS = [
   { label: "2 weeks", hours: 336 },
 ];
 
-/// Stake MON against a personal deadline inside a Circle. The stake is escrowed by
+/// Stake CELO against a personal deadline inside a Circle. The stake is escrowed by
 /// the Core; hit the deadline and get it back on a group vote, miss and it
 /// funds the Circle's Pot.
 export function OpenBond({
@@ -72,7 +72,7 @@ export function OpenBond({
       </div>
 
       <label className="flex flex-col gap-1.5">
-        <span className="text-xs uppercase tracking-widest text-faint">Stake (MON)</span>
+        <span className="text-xs uppercase tracking-widest text-faint">Stake (CELO)</span>
         <input
           value={stake}
           onChange={(e) => setStake(e.target.value.replace(/[^0-9.]/g, ""))}

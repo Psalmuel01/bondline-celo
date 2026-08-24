@@ -9,7 +9,7 @@ import {
   circleFactoryAbi,
   coreAbi,
 } from "./contracts";
-import { monadMainnet } from "./chain";
+import { activeChain } from "./chain";
 import { recordActivity } from "./supabase";
 
 /// Wraps every Bondline write with pending/confirming/tx-hash state so the UI
@@ -47,11 +47,11 @@ export function useBondlineWrite(onConfirmed?: () => void) {
   ): Promise<`0x${string}` | undefined> {
     setError(undefined);
     try {
-      // Make sure the wallet is on Monad before firing. Otherwise the tx goes
+      // Make sure the wallet is on Celo before firing. Otherwise the tx goes
       // to whatever chain the wallet is on and fails with a cryptic error the
       // user can't connect to "wrong network".
-      if (chainId !== monadMainnet.id) {
-        await switchChainAsync({ chainId: monadMainnet.id });
+      if (chainId !== activeChain.id) {
+        await switchChainAsync({ chainId: activeChain.id });
       }
       const h = await fn();
       setHash(h);

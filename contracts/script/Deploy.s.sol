@@ -13,13 +13,10 @@ import {CircleFactory} from "../src/CircleFactory.sol";
 ///   4. core.setFactory(factory) — write-once link so the core trusts the
 ///      factory's Circle registry.
 ///
-/// Run against Monad testnet:
-///   forge script script/Deploy.s.sol --rpc-url monad_testnet --broadcast --verify
+/// Run against Celo Sepolia:
+///   forge script script/Deploy.s.sol --rpc-url celo_sepolia --broadcast
 contract Deploy is Script {
-    function run()
-        external
-        returns (BondlineCore core, CircleFactory factory, Circle circleImpl)
-    {
+    function run() external returns (BondlineCore core, CircleFactory factory, Circle circleImpl) {
         uint256 pk = vm.envUint("PRIVATE_KEY");
         vm.startBroadcast(pk);
 

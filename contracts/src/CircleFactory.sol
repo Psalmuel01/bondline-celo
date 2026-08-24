@@ -33,11 +33,7 @@ contract CircleFactory {
     error ZeroAddress();
 
     event CircleCreated(
-        address indexed circle,
-        address indexed creator,
-        string name,
-        address[] members,
-        uint16 cosignThresholdBps
+        address indexed circle, address indexed creator, string name, address[] members, uint16 cosignThresholdBps
     );
 
     constructor(address core_, address implementation_) {
@@ -52,11 +48,10 @@ contract CircleFactory {
     /// @param members_ fixed member list, >=2, no zero address, no duplicates
     /// @param cosignThresholdBps_ cosign bar in bps, [1000, 10000]
     /// @return circle the address of the newly deployed Circle clone
-    function createCircle(
-        string calldata name_,
-        address[] calldata members_,
-        uint16 cosignThresholdBps_
-    ) external returns (address circle) {
+    function createCircle(string calldata name_, address[] calldata members_, uint16 cosignThresholdBps_)
+        external
+        returns (address circle)
+    {
         if (members_.length < 2) revert CircleTooSmall();
         if (cosignThresholdBps_ < MIN_THRESHOLD_BPS || cosignThresholdBps_ > BPS_DENOMINATOR) {
             revert ThresholdOutOfRange();

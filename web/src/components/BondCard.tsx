@@ -107,7 +107,7 @@ export function BondCard({
           </div>
           <div className="tnum text-2xl font-semibold text-gold">
             {formatMon(b.stake)}
-            <span className="ml-1 text-sm text-muted">MON</span>
+            <span className="ml-1 text-sm text-muted">CELO</span>
           </div>
         </div>
       </div>

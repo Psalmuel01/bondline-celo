@@ -82,15 +82,15 @@ begin
     case v_event.event_name
       when 'CircleCreated' then
         insert into public.indexed_circles (
-          circle_address, creator_address, name, members, cosign_threshold_bps,
+          chain_id, circle_address, creator_address, name, members, cosign_threshold_bps,
           balance, created_block, updated_block, updated_at
         ) values (
-          lower(v_payload->>'circle'), lower(v_payload->>'creator'), v_payload->>'name',
+          p_chain_id, lower(v_payload->>'circle'), lower(v_payload->>'creator'), v_payload->>'name',
           array(select lower(value) from jsonb_array_elements_text(v_payload->'members')),
           (v_payload->>'cosignThresholdBps')::integer, 0, v_event.block_number,
           v_event.block_number, now()
         )
-        on conflict (circle_address) do update set
+        on conflict (chain_id, circle_address) do update set
           creator_address = excluded.creator_address,
           name = excluded.name,
           members = excluded.members,
@@ -100,16 +100,16 @@ begin
 
       when 'BondOpened' then
         insert into public.indexed_bonds (
-          bond_id, creator_address, circle_address, stake, deadline, cosign_closes_at,
+          chain_id, bond_id, creator_address, circle_address, stake, deadline, cosign_closes_at,
           status, cosigns, objections, description, receipts_hash, receipts_uri,
           opened_block, updated_block, updated_at
         ) values (
-          (v_payload->>'id')::numeric, lower(v_payload->>'creator'), lower(v_payload->>'circle'),
+          p_chain_id, (v_payload->>'id')::numeric, lower(v_payload->>'creator'), lower(v_payload->>'circle'),
           (v_payload->>'stake')::numeric, to_timestamp((v_payload->>'deadline')::numeric), null,
           0, 0, 0, v_payload->>'description', null, null,
           v_event.block_number, v_event.block_number, now()
         )
-        on conflict (bond_id) do nothing;
+        on conflict (chain_id, bond_id) do nothing;
 
       when 'BondDeclared' then
         update public.indexed_bonds set
@@ -119,21 +119,21 @@ begin
           receipts_uri = v_payload->>'receiptsUri',
           updated_block = v_event.block_number,
           updated_at = now()
-        where bond_id = (v_payload->>'id')::numeric;
+        where chain_id = p_chain_id and bond_id = (v_payload->>'id')::numeric;
 
       when 'Cosigned' then
         update public.indexed_bonds set
           cosigns = (v_payload->>'cosigns')::integer,
           updated_block = v_event.block_number,
           updated_at = now()
-        where bond_id = (v_payload->>'id')::numeric;
+        where chain_id = p_chain_id and bond_id = (v_payload->>'id')::numeric;
 
       when 'Objected' then
         update public.indexed_bonds set
           objections = (v_payload->>'objections')::integer,
           updated_block = v_event.block_number,
           updated_at = now()
-        where bond_id = (v_payload->>'id')::numeric;
+        where chain_id = p_chain_id and bond_id = (v_payload->>'id')::numeric;
 
       when 'BondResolved' then
         v_status := (v_payload->>'status')::integer;
@@ -141,44 +141,44 @@ begin
           status = v_status,
           updated_block = v_event.block_number,
           updated_at = now()
-        where bond_id = (v_payload->>'id')::numeric;
+        where chain_id = p_chain_id and bond_id = (v_payload->>'id')::numeric;
         if v_status = 3 then
           update public.indexed_circles set
             balance = balance + (v_payload->>'stake')::numeric,
             updated_block = v_event.block_number,
             updated_at = now()
-          where circle_address = lower(v_event.circle_address);
+          where chain_id = p_chain_id and circle_address = lower(v_event.circle_address);
         end if;
 
       when 'PayoutProposed' then
         insert into public.indexed_payouts (
-          payout_id, circle_address, recipient_address, amount, executed, cosigns,
+          chain_id, payout_id, circle_address, recipient_address, amount, executed, cosigns,
           memo, proposed_block, updated_block, updated_at
         ) values (
-          (v_payload->>'payoutId')::numeric, lower(v_payload->>'circle'),
+          p_chain_id, (v_payload->>'payoutId')::numeric, lower(v_payload->>'circle'),
           lower(v_payload->>'to'), (v_payload->>'amount')::numeric, false, 0,
           v_payload->>'memo', v_event.block_number, v_event.block_number, now()
         )
-        on conflict (payout_id) do nothing;
+        on conflict (chain_id, payout_id) do nothing;
 
       when 'PayoutCosigned' then
         update public.indexed_payouts set
           cosigns = (v_payload->>'cosigns')::integer,
           updated_block = v_event.block_number,
           updated_at = now()
-        where payout_id = (v_payload->>'payoutId')::numeric;
+        where chain_id = p_chain_id and payout_id = (v_payload->>'payoutId')::numeric;
 
       when 'PayoutExecuted' then
         update public.indexed_payouts set
           executed = true,
           updated_block = v_event.block_number,
           updated_at = now()
-        where payout_id = (v_payload->>'payoutId')::numeric;
+        where chain_id = p_chain_id and payout_id = (v_payload->>'payoutId')::numeric;
         update public.indexed_circles set
           balance = balance - (v_payload->>'amount')::numeric,
           updated_block = v_event.block_number,
           updated_at = now()
-        where circle_address = lower(v_payload->>'circle');
+        where chain_id = p_chain_id and circle_address = lower(v_payload->>'circle');
       else
         raise exception 'Unsupported Bondline event: %', v_event.event_name;
     end case;
@@ -198,9 +198,9 @@ begin
     'applied', true,
     'lastFinalizedBlock', p_last_finalized_block,
     'eventCount', jsonb_array_length(coalesce(p_events, '[]'::jsonb)),
-    'circleCount', (select count(*) from public.indexed_circles),
-    'bondCount', (select count(*) from public.indexed_bonds),
-    'payoutCount', (select count(*) from public.indexed_payouts)
+    'circleCount', (select count(*) from public.indexed_circles where chain_id = p_chain_id),
+    'bondCount', (select count(*) from public.indexed_bonds where chain_id = p_chain_id),
+    'payoutCount', (select count(*) from public.indexed_payouts where chain_id = p_chain_id)
   );
 end;
 $$;
@@ -211,7 +211,7 @@ grant execute on function public.apply_chain_event_batch(bigint, bigint, bigint,
   to service_role;
 
 -- Indexed snapshots use canonical chain activity rather than browser-authored rows.
-create or replace function public.get_circle_snapshot(p_circle_address text)
+create or replace function public.get_circle_snapshot(p_chain_id bigint, p_circle_address text)
 returns jsonb
 language sql
 stable
@@ -220,35 +220,35 @@ set search_path = public
 as $$
   select case when c.circle_address is null then null else jsonb_build_object(
     'circle', to_jsonb(c),
-    'metadata', (select to_jsonb(m) from public.circle_metadata m where m.circle_address = c.circle_address),
+    'metadata', (select to_jsonb(m) from public.circle_metadata m where m.chain_id = p_chain_id and m.circle_address = c.circle_address),
     'profiles', coalesce((
       select jsonb_agg(to_jsonb(p) order by p.address)
       from public.profiles p where p.address = any(c.members)
     ), '[]'::jsonb),
     'bonds', coalesce((
       select jsonb_agg(to_jsonb(b) order by b.status, b.deadline, b.bond_id desc)
-      from public.indexed_bonds b where b.circle_address = c.circle_address
+      from public.indexed_bonds b where b.chain_id = p_chain_id and b.circle_address = c.circle_address
     ), '[]'::jsonb),
     'payouts', coalesce((
       select jsonb_agg(to_jsonb(py) order by py.executed, py.payout_id desc)
-      from public.indexed_payouts py where py.circle_address = c.circle_address
+      from public.indexed_payouts py where py.chain_id = p_chain_id and py.circle_address = c.circle_address
     ), '[]'::jsonb),
     'activity', coalesce((
       select jsonb_agg(to_jsonb(e) order by e.block_number desc, e.log_index desc)
       from (
         select * from public.chain_events
-        where chain_id = 143 and circle_address = c.circle_address
+        where chain_id = p_chain_id and circle_address = c.circle_address
         order by block_number desc, log_index desc limit 50
       ) e
     ), '[]'::jsonb),
     'indexedThroughBlock', (
-      select last_finalized_block from public.chain_sync_state where chain_id = 143
+      select last_finalized_block from public.chain_sync_state where chain_id = p_chain_id
     )
   ) end
   from public.indexed_circles c
-  where c.circle_address = lower(p_circle_address)
+  where c.chain_id = p_chain_id and c.circle_address = lower(p_circle_address)
   limit 1;
 $$;
 
-revoke all on function public.get_circle_snapshot(text) from public, anon, authenticated;
-grant execute on function public.get_circle_snapshot(text) to service_role;
+revoke all on function public.get_circle_snapshot(bigint, text) from public, anon, authenticated;
+grant execute on function public.get_circle_snapshot(bigint, text) to service_role;

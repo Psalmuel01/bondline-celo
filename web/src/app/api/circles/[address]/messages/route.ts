@@ -4,6 +4,7 @@ import { isCircleMember } from "@/lib/server/membership";
 import { getWalletSession } from "@/lib/server/session";
 import { supabaseAdminRequest } from "@/lib/server/supabase-admin";
 import type { ChatMessage } from "@/lib/supabase";
+import { ACTIVE_CHAIN_ID } from "@/lib/chain";
 
 export const runtime = "nodejs";
 
@@ -22,7 +23,7 @@ export async function GET(_request: Request, context: { params: Promise<{ addres
     const { address } = await context.params;
     const auth = await authorize(address);
     if (auth.error) return auth.error;
-    const rows = await supabaseAdminRequest<ChatMessage[]>(`circle_messages?select=*&circle_address=eq.${address.toLowerCase()}&order=created_at.desc&limit=50`);
+    const rows = await supabaseAdminRequest<ChatMessage[]>(`circle_messages?select=*&chain_id=eq.${ACTIVE_CHAIN_ID}&circle_address=eq.${address.toLowerCase()}&order=created_at.desc&limit=50`);
     return NextResponse.json(rows);
   } catch {
     return NextResponse.json({ error: "Private chat is temporarily unavailable." }, { status: 503 });
@@ -40,7 +41,7 @@ export async function POST(request: Request, context: { params: Promise<{ addres
     const rows = await supabaseAdminRequest<ChatMessage[]>("circle_messages", {
       method: "POST",
       headers: { Prefer: "return=representation" },
-      body: JSON.stringify({ circle_address: address.toLowerCase(), sender_address: auth.session.address.toLowerCase(), body: message }),
+      body: JSON.stringify({ chain_id: ACTIVE_CHAIN_ID, circle_address: address.toLowerCase(), sender_address: auth.session.address.toLowerCase(), body: message }),
     });
     return NextResponse.json(rows[0], { status: 201 });
   } catch {

@@ -4,6 +4,7 @@ import { isCircleMember } from "@/lib/server/membership";
 import { getWalletSession } from "@/lib/server/session";
 import { supabaseAdminRequest } from "@/lib/server/supabase-admin";
 import type { CircleMetadata } from "@/lib/supabase";
+import { ACTIVE_CHAIN_ID } from "@/lib/chain";
 
 export const runtime = "nodejs";
 
@@ -22,7 +23,7 @@ export async function PATCH(request: Request, context: { params: Promise<{ addre
     const rows = await supabaseAdminRequest<CircleMetadata[]>("circle_metadata", {
       method: "POST",
       headers: { Prefer: "resolution=merge-duplicates,return=representation" },
-      body: JSON.stringify({ circle_address: address.toLowerCase(), mission: mission || null, pot_goal: potGoal, banner_url: input.bannerUrl?.trim() || null, updated_at: new Date().toISOString() }),
+      body: JSON.stringify({ chain_id: ACTIVE_CHAIN_ID, circle_address: address.toLowerCase(), mission: mission || null, pot_goal: potGoal, banner_url: input.bannerUrl?.trim() || null, updated_at: new Date().toISOString() }),
     });
     return NextResponse.json(rows[0]);
   } catch {

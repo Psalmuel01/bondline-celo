@@ -10,6 +10,7 @@ import { circleSnapshotKey, getCircleSnapshot } from "@/lib/snapshots";
 import { CircleCard } from "./CircleCard";
 import { CreateCircle } from "./CreateCircle";
 import { useWalletSession } from "@/lib/useWalletSession";
+import { ACTIVE_CHAIN_ID } from "@/lib/chain";
 
 /// Multi-group dashboard: every Circle you're in, plus a toggle to spin up a new
 /// one. Circles you're not a member of are shown dimmed under "other Circles" so
@@ -50,7 +51,7 @@ export function Dashboard() {
       const circleKey = circle.address.toLowerCase();
       void queryClient.prefetchQuery({ queryKey: circleSnapshotKey(circle.address), queryFn: () => getCircleSnapshot(circle.address) });
       if (isAuthenticated && address && circle.members.some((member) => member.toLowerCase() === address.toLowerCase())) {
-        void queryClient.prefetchQuery({ queryKey: ["circle-messages", circleKey], queryFn: () => getMessages(circle.address) });
+        void queryClient.prefetchQuery({ queryKey: ["circle-messages", ACTIVE_CHAIN_ID, circleKey], queryFn: () => getMessages(circle.address) });
       }
     }
   }, [address, circles, isAuthenticated, isLoading, queryClient]);

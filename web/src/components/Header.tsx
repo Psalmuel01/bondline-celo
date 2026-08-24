@@ -2,6 +2,7 @@ import Link from "next/link";
 import { ConnectButton } from "./ConnectButton";
 import { Wordmark } from "./Logo";
 import { NotificationCenter } from "./NotificationCenter";
+import { activeChain } from "@/lib/chain";
 
 export function Header() {
   return (
@@ -12,7 +13,7 @@ export function Header() {
         </Link>
         <span className="tnum hidden items-center gap-1.5 rounded border border-gold/30 bg-gold/5 px-1.5 py-0.5 text-[10px] tracking-wide text-gold/90 sm:inline-flex">
           <span className="h-1 w-1 rounded-full bg-gold" />
-          MONAD MAINNET
+          {activeChain.name.toUpperCase()}
         </span>
       </div>
       <div className="flex items-center gap-1.5 sm:gap-4">

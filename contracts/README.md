@@ -1,6 +1,6 @@
 # Bondline Smart Contracts
 
-Solidity smart contracts implementing the core Bondline logic on Monad.
+Solidity smart contracts implementing the core Bondline logic on Celo.
 
 ## Setup & Compilation
 
@@ -26,7 +26,7 @@ forge snapshot
 ## Deployment
 
 1. Copy `.env.example` to `.env` and fill out your private key.
-2. Deploy the suite to Monad testnet:
+2. Deploy the suite to Celo testnet:
 ```bash
 make deploy
 ```

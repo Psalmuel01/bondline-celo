@@ -9,7 +9,7 @@ import { useCircleSnapshot } from "@/lib/useSnapshots";
 import { circleSnapshotKey, type CircleSnapshot } from "@/lib/snapshots";
 import { Status } from "@/lib/contracts";
 import { bpsPct, formatMon, shortAddr } from "@/lib/format";
-import { explorerAddr } from "@/lib/chain";
+import { ACTIVE_CHAIN_ID, explorerAddr } from "@/lib/chain";
 import { Header } from "./Header";
 import { Footer } from "./Footer";
 import { Avatar } from "./Avatar";
@@ -37,7 +37,7 @@ export function CircleDetail({ address: circleAddress }: { address: `0x${string}
   const { payouts, isLoading: payoutsLoading, refresh: refreshPayouts } = usePayouts();
   const queryClient = useQueryClient();
   const metadataQuery = useQuery({
-    queryKey: ["circle-metadata", circleAddress.toLowerCase()],
+    queryKey: ["circle-metadata", ACTIVE_CHAIN_ID, circleAddress.toLowerCase()],
     queryFn: () => getCircleMetadata(circleAddress),
     enabled: isSupabaseConfigured,
     initialData: snapshot.data?.metadata,
@@ -45,7 +45,7 @@ export function CircleDetail({ address: circleAddress }: { address: `0x${string}
   const metadata = metadataQuery.data ?? snapshot.data?.metadata;
   const metadataLoading = metadataQuery.isLoading && !snapshot.data;
   const setCircleMetadata = useCallback((next: CircleMetadata | undefined) => {
-    queryClient.setQueryData(["circle-metadata", circleAddress.toLowerCase()], next);
+    queryClient.setQueryData(["circle-metadata", ACTIVE_CHAIN_ID, circleAddress.toLowerCase()], next);
     queryClient.setQueryData<CircleSnapshot>(circleSnapshotKey(circleAddress), (current) => current ? { ...current, metadata: next } : current);
   }, [circleAddress, queryClient]);
   // Profile data is preloaded from the dashboard for this exact member list.
@@ -60,7 +60,7 @@ export function CircleDetail({ address: circleAddress }: { address: `0x${string}
     refresh();
     refreshBonds();
     refreshPayouts();
-    void queryClient.invalidateQueries({ queryKey: ["circle-activity", circleAddress.toLowerCase()] });
+    void queryClient.invalidateQueries({ queryKey: ["circle-activity", ACTIVE_CHAIN_ID, circleAddress.toLowerCase()] });
     void queryClient.invalidateQueries({ queryKey: circleSnapshotKey(circleAddress) });
   }
 
@@ -123,10 +123,10 @@ export function CircleDetail({ address: circleAddress }: { address: `0x${string}
                     </div>
                     <div className="tnum text-3xl font-semibold text-gold">
                       {formatMon(circle.balance)}
-                      <span className="ml-1 text-base text-muted">MON</span>
+                      <span className="ml-1 text-base text-muted">CELO</span>
                     </div>
                     <p className="mt-1 text-xs text-faint">earned one crossed deadline at a time</p>
-                    {metadata?.pot_goal && <p className="tnum mt-2 text-xs text-gold">goal · {metadata.pot_goal} MON</p>}
+                    {metadata?.pot_goal && <p className="tnum mt-2 text-xs text-gold">goal · {metadata.pot_goal} CELO</p>}
                   </div>
                 </div>
             </div>

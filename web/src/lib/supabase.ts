@@ -1,3 +1,5 @@
+import { ACTIVE_CHAIN_ID } from "./chain";
+
 // Tiny Supabase REST client. Keeping this dependency-free makes the optional
 // social layer easy to turn on: set the two public values in .env.local.
 const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -9,9 +11,9 @@ const MAX_IMAGE_BYTES = 5 * 1024 * 1024;
 const IMAGE_TYPES = new Set(["image/jpeg", "image/png", "image/webp", "image/gif"]);
 
 export type ProfileRow = { address: string; display_name: string; avatar_url: string | null; avatar_color: string; updated_at: string };
-export type ChatMessage = { id: string; circle_address: string; sender_address: string; body: string; created_at: string };
-export type CircleMetadata = { circle_address: string; mission: string | null; pot_goal: string | null; banner_url: string | null; updated_at: string };
-export type Activity = { id: string; circle_address: string; actor_address: string | null; kind: string; body: string; tx_hash: string | null; created_at: string };
+export type ChatMessage = { id: string; chain_id: number; circle_address: string; sender_address: string; body: string; created_at: string };
+export type CircleMetadata = { chain_id: number; circle_address: string; mission: string | null; pot_goal: string | null; banner_url: string | null; updated_at: string };
+export type Activity = { id: string; chain_id: number; circle_address: string; actor_address: string | null; kind: string; body: string; tx_hash: string | null; created_at: string };
 
 async function request<T>(path: string, init?: RequestInit): Promise<T> {
   if (!url || !key) throw new Error("Supabase is not configured.");
@@ -73,7 +75,7 @@ export async function saveProfile(address: string, profile: { displayName: strin
 }
 
 export async function getCircleMetadata(circleAddress: string) {
-  const rows = await request<CircleMetadata[]>(`circle_metadata?select=*&circle_address=eq.${circleAddress.toLowerCase()}&limit=1`);
+  const rows = await request<CircleMetadata[]>(`circle_metadata?select=*&chain_id=eq.${ACTIVE_CHAIN_ID}&circle_address=eq.${circleAddress.toLowerCase()}&limit=1`);
   return rows[0];
 }
 
@@ -83,12 +85,12 @@ export async function saveCircleMetadata(circleAddress: string, metadata: { miss
 }
 
 export async function getActivity(circleAddress: string) {
-  return request<Activity[]>(`circle_activity?select=*&circle_address=eq.${circleAddress.toLowerCase()}&order=created_at.desc&limit=50`);
+  return request<Activity[]>(`circle_activity?select=*&chain_id=eq.${ACTIVE_CHAIN_ID}&circle_address=eq.${circleAddress.toLowerCase()}&order=created_at.desc&limit=50`);
 }
 
 export async function recordActivity(activity: { circleAddress: string; actorAddress?: string; kind: string; body: string; txHash: string }) {
   if (!isSupabaseConfigured) return;
-  await request<Activity[]>("circle_activity", { method: "POST", headers: { Prefer: "return=minimal" }, body: JSON.stringify({ circle_address: activity.circleAddress.toLowerCase(), actor_address: activity.actorAddress?.toLowerCase() || null, kind: activity.kind, body: activity.body, tx_hash: activity.txHash }) });
+  await request<Activity[]>("circle_activity", { method: "POST", headers: { Prefer: "return=minimal" }, body: JSON.stringify({ chain_id: ACTIVE_CHAIN_ID, circle_address: activity.circleAddress.toLowerCase(), actor_address: activity.actorAddress?.toLowerCase() || null, kind: activity.kind, body: activity.body, tx_hash: activity.txHash }) });
 }
 
 export async function getMessages(circleAddress: string) {

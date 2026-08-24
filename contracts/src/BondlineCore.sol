@@ -7,7 +7,7 @@ import {Circle} from "./Circle.sol";
 import {CircleFactory} from "./CircleFactory.sol";
 
 /// @title BondlineCore
-/// @notice The central Bond + cosign engine for Bondline. Friends stake MON
+/// @notice The central Bond + cosign engine for Bondline. Friends stake CELO
 ///         against their own deadlines; cross the Line and the stake funds their
 ///         Circle's Pot, beat it and they're refunded once enough of the Circle
 ///         cosigns.
@@ -135,7 +135,7 @@ contract BondlineCore is ReentrancyGuard {
 
     // --- Bond lifecycle ---
 
-    /// @notice Stake MON against a personal deadline, tied to a Circle you're in.
+    /// @notice Stake CELO against a personal deadline, tied to a Circle you're in.
     ///         Cross the Line (or fail the cosign) and the stake funds the Pot.
     function openBond(address circle, string calldata description, uint64 deadline)
         external
@@ -263,7 +263,7 @@ contract BondlineCore is ReentrancyGuard {
         uint256 stake = b.stake;
         if (cleared) {
             b.status = Status.Met;
-            (bool ok, ) = payable(b.creator).call{value: stake}("");
+            (bool ok,) = payable(b.creator).call{value: stake}("");
             if (!ok) revert TransferFailed();
         } else {
             b.status = Status.Crossed;
@@ -274,7 +274,7 @@ contract BondlineCore is ReentrancyGuard {
 
     // --- Pot payouts ---
 
-    /// @notice Propose paying out MON from a Circle's Pot. Proposer must be a
+    /// @notice Propose paying out CELO from a Circle's Pot. Proposer must be a
     ///         member and auto-cosigns. Requires the Circle to currently hold at
     ///         least `amount`. Gated by the same per-Circle threshold as Bonds,
     ///         but over the full membership (a payout has no "creator" to exclude
@@ -290,9 +290,7 @@ contract BondlineCore is ReentrancyGuard {
         if (amount == 0 || amount > Circle(circle).balance()) revert InsufficientPotBalance();
 
         payoutId = _payouts.length;
-        _payouts.push(
-            Payout({circle: circle, to: to, amount: amount, executed: false, cosigns: 1, memo: memo})
-        );
+        _payouts.push(Payout({circle: circle, to: to, amount: amount, executed: false, cosigns: 1, memo: memo}));
         hasCosignedPayout[payoutId][msg.sender] = true;
         emit PayoutProposed(payoutId, circle, to, amount, memo);
         emit PayoutCosigned(payoutId, msg.sender, 1);
@@ -343,7 +341,14 @@ contract BondlineCore is ReentrancyGuard {
     function cosignState(uint256 id)
         external
         view
-        returns (uint256 eligible, uint256 required, uint32 confirms, uint32 objections, bool clearedNow, bool crossableNow)
+        returns (
+            uint256 eligible,
+            uint256 required,
+            uint32 confirms,
+            uint32 objections,
+            bool clearedNow,
+            bool crossableNow
+        )
     {
         Bond storage b = _get(id);
         eligible = _eligibleCosigners(b.circle);
