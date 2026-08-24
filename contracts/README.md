@@ -26,20 +26,15 @@ forge snapshot
 ## Deployment
 
 1. Copy `.env.example` to `.env` and fill out your private key.
-2. Deploy the suite to Celo testnet:
+2. Deploy the suite to Celo Sepolia:
 ```bash
-make deploy
+make deploy-celo-sepolia
 ```
-This runs the Foundry deployment script, extracts the deployed addresses, and automatically writes them to `web/.env.local` for the frontend.
+The current verified deployment is Core `0x111004038F8e918a02CD760E2E2630E0C9E789d6`, Factory `0xB337fC04B8A146c93bCC7b57229Cc8cb18c03fd6`, and Circle implementation `0x8beAfBe2dA703A8ff869C8aB57863bDEA5AD82bf`, deployed at block `34271637`. Deployment artifacts are stored under `broadcast/Deploy.s.sol/11142220/`. Copy the Core and Factory addresses plus the deployment block into `web/.env.local`; the Make target does not write application environment files.
 
 ## Verification
 
 To verify the contract bytecode on block explorers:
 ```bash
-make verify
-```
-
-Alternatively, use the direct sequence target:
-```bash
-make deploy-verify
+make verify-celo-sepolia
 ```

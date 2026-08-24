@@ -16,7 +16,8 @@ This roadmap turns the hackathon build into a production system without replacin
 - [x] Implement ingestion for every Core and Factory event with block number, transaction hash, and log index.
 - [x] Make batches contiguous, idempotent, concurrency-safe, and atomic with the sync cursor.
 - [x] Reconstruct projections by replaying the complete finalized event history.
-- [ ] Run and verify the production backfill from block `88718941`.
+- [ ] Run and verify the Celo Sepolia backfill from block `34271637`.
+- [ ] Record the independent Celo mainnet deployment block before any production backfill.
 - [ ] Schedule the protected indexer endpoint and monitor cursor lag.
 - [x] Define canonical indexed projections and an atomic Circle snapshot endpoint.
 - [ ] Populate and reconcile the projections before enabling the endpoint in the UI.

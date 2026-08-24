@@ -13,12 +13,24 @@ Bondline is a group commitment protocol: members create Circles, escrow native C
 
 The canonical runtime selection is `web/src/lib/chain.ts`. `NEXT_PUBLIC_BONDLINE_NETWORK` defaults to `celo-sepolia`; production must explicitly set `celo-mainnet`. Contract addresses, RPC, deployment block, finality, explorer, and indexer behavior derive from that selection.
 
+## Deployed contracts — Celo Sepolia
+
+Deployment block: `34271637`
+
+| Contract | Address |
+| --- | --- |
+| `BondlineCore` | [`0x111004038F8e918a02CD760E2E2630E0C9E789d6`](https://sepolia.celoscan.io/address/0x111004038f8e918a02cd760e2e2630e0c9e789d6) |
+| `CircleFactory` | [`0xB337fC04B8A146c93bCC7b57229Cc8cb18c03fd6`](https://sepolia.celoscan.io/address/0xb337fc04b8a146c93bcc7b57229cc8cb18c03fd6) |
+| `Circle` implementation | [`0x8beAfBe2dA703A8ff869C8aB57863bDEA5AD82bf`](https://sepolia.celoscan.io/address/0x8beafbe2da703a8ff869c8ab57863bdea5ad82bf) |
+
+All three contracts are source-verified. The deployment transaction and chain-specific Foundry artifacts are under `contracts/broadcast/Deploy.s.sol/11142220/`.
+
 ## Celo Sepolia setup
 
 1. Install Foundry and Node.js, then run `pnpm install` in `web/`.
 2. Copy `contracts/.env.example` to `contracts/.env` and `web/.env.example` to `web/.env.local`; provide your own values only.
 3. Fund a dedicated deployer with test CELO.
-4. From `contracts/`, run `make deploy-celo-sepolia`. Record the Core, Factory, and deployment block in the web environment.
+4. To reproduce a fresh deployment, run `make deploy-celo-sepolia` from `contracts/` and record its addresses and deployment block.
 5. Run `make verify-celo-sepolia` after the broadcast exists.
 
 Sepolia: chain `11142220`, RPC `https://forno.celo-sepolia.celo-testnet.org`, explorer `https://celo-sepolia.blockscout.com`.

@@ -13,5 +13,5 @@ celo_mainnet = "https://forno.celo.org"
 
 # Celo explorers expose Etherscan-compatible verification APIs.
 [etherscan]
-celo_sepolia = { key = "${CELOSCAN_API_KEY}", chain = 11142220, url = "https://api-sepolia.celoscan.io/api" }
-celo_mainnet = { key = "${CELOSCAN_API_KEY}", chain = 42220, url = "https://api.celoscan.io/api" }
+celo_sepolia = { key = "${CELOSCAN_API_KEY}", chain = 11142220, url = "https://api.etherscan.io/v2/api" }
+celo_mainnet = { key = "${CELOSCAN_API_KEY}", chain = 42220, url = "https://api.etherscan.io/v2/api" }

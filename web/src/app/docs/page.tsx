@@ -165,7 +165,8 @@ export default function DocsPage() {
         <div className="mt-6 rounded-xl border border-gold/25 bg-gold/5 p-5 text-sm text-muted">
           <p className="text-bone">A note on the build.</p>
           <p className="mt-1.5">
-            Bondline runs on Celo testnet with test CELO. It hasn&apos;t been
+            Bondline runs on Celo Sepolia with test CELO. Its verified Core and
+            Factory were deployed at block 34271637. It hasn&apos;t been
             audited — treat it as a hackathon build, not a place for money you
             can&apos;t afford to lose to a bug.
           </p>
@@ -190,6 +191,14 @@ export default function DocsPage() {
             className="rounded-lg border border-line px-5 py-2.5 text-sm font-medium text-bone transition hover:border-panel-hi"
           >
             Grab testnet CELO ↗
+          </a>
+          <a
+            href="https://sepolia.celoscan.io/address/0x111004038f8e918a02cd760e2e2630e0c9e789d6"
+            target="_blank"
+            rel="noreferrer"
+            className="rounded-lg border border-line px-5 py-2.5 text-sm font-medium text-bone transition hover:border-panel-hi"
+          >
+            Verified Core ↗
           </a>
         </div>
       </article>
