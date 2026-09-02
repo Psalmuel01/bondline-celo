@@ -25,6 +25,18 @@ Deployment block: `34271637`
 
 All three contracts are source-verified. The deployment transaction and chain-specific Foundry artifacts are under `contracts/broadcast/Deploy.s.sol/11142220/`.
 
+## Deployed contracts — Celo Mainnet
+
+Deployment started at block `76480601` and completed at block `76480602`.
+
+| Contract | Address |
+| --- | --- |
+| `BondlineCore` | [`0x111004038F8e918a02CD760E2E2630E0C9E789d6`](https://celoscan.io/address/0x111004038f8e918a02cd760e2e2630e0c9e789d6) |
+| `CircleFactory` | [`0xB337fC04B8A146c93bCC7b57229Cc8cb18c03fd6`](https://celoscan.io/address/0xb337fc04b8a146c93bcc7b57229cc8cb18c03fd6) |
+| `Circle` implementation | [`0x8beAfBe2dA703A8ff869C8aB57863bDEA5AD82bf`](https://celoscan.io/address/0x8beafbe2da703a8ff869c8ab57863bdea5ad82bf) |
+
+All three mainnet contracts are source-verified. The identical Sepolia and mainnet addresses result from deploying the same sequence from a nonce-zero deployer; contract state remains independent per chain. Mainnet artifacts are under `contracts/broadcast/Deploy.s.sol/42220/`.
+
 ## Celo Sepolia setup
 
 1. Install Foundry and Node.js, then run `pnpm install` in `web/`.

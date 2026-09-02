@@ -1,6 +1,6 @@
 # Bondline web
 
-Bondline is a group commitment app currently deployed on Celo Sepolia. A Circle stakes CELO against
+Bondline is a group commitment app deployed on Celo mainnet, with a separate Celo Sepolia test deployment. A Circle stakes CELO against
 personal deadlines: meet the Line and the Circle cosigns a refund; miss it and
 the stake funds the shared Pot.
 
@@ -35,14 +35,14 @@ Open [http://localhost:3000](http://localhost:3000).
 
 ### Environment variables
 
-The current verified Celo Sepolia deployment uses:
+The production Celo mainnet deployment uses:
 
 ```env
-NEXT_PUBLIC_BONDLINE_NETWORK=celo-sepolia
+NEXT_PUBLIC_BONDLINE_NETWORK=celo-mainnet
 NEXT_PUBLIC_CORE_ADDRESS=0x111004038F8e918a02CD760E2E2630E0C9E789d6
 NEXT_PUBLIC_CIRCLE_FACTORY_ADDRESS=0xB337fC04B8A146c93bCC7b57229Cc8cb18c03fd6
-CELO_RPC_URL=https://forno.celo-sepolia.celo-testnet.org
-BONDLINE_DEPLOYMENT_BLOCK=34271637
+CELO_RPC_URL=https://forno.celo.org
+BONDLINE_DEPLOYMENT_BLOCK=76480601
 ```
 
 To enable profiles, Circle metadata, chat, and app-recorded activity, create a
@@ -65,7 +65,7 @@ Restart `npm run dev` after changing `.env.local`.
 
 ## Product walkthrough
 
-1. Connect an injected wallet on Celo Sepolia.
+1. Connect an injected wallet on the configured Celo network.
 2. Click **New Circle** and add at least one other member wallet.
 3. Open the Circle and click your own name to add a profile name, avatar URL,
    or avatar color.
@@ -106,7 +106,7 @@ every minute with the header `Authorization: Bearer <BONDLINE_INDEXER_SECRET>`.
 Each call advances one configurable block range.
 Vercel Cron may instead use its standard server-only `CRON_SECRET`; the route
 accepts either secret.
-The Celo Sepolia deployment block is `34271637`, finality lag is 12 blocks, and each
+The Celo mainnet deployment block is `76480601`, finality lag is 12 blocks, and each
 database batch covers 2,000 blocks. RPC log reads are automatically split into
 100-block requests to respect Celo's public endpoint limit. A server-side Envio
 HyperSync is used only for Celo mainnet, where the supported endpoint is
