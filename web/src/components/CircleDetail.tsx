@@ -160,23 +160,28 @@ export function CircleDetail({ address: circleAddress }: { address: `0x${string}
                 ))}
                 <CircleSettings circle={circle} metadata={metadata} onMetadata={setCircleMetadata} />
                 </div>
-                <div className="ml-auto flex items-center">
+                <div className="ml-auto flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => document.getElementById("circle-chat")?.scrollIntoView({ behavior: "smooth", block: "start" })}
+                    className="group flex items-center gap-2 rounded-lg border border-gold/30 bg-gold/10 px-3 py-2 text-xs font-semibold text-gold transition hover:border-gold/60 hover:bg-gold/15"
+                  >
+                    <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-confirm" />
+                    Jump to chat
+                    <span className="transition-transform group-hover:translate-y-0.5">↓</span>
+                  </button>
                   <CircleShare circle={circle} />
                 </div>
               </div>
             </div>
           </section>
 
-          <div className="mt-8">
-            <CircleChat circle={circle} names={names} profiles={profiles} />
-          </div>
-
-          <div className="mt-8 grid gap-8 xl:grid-cols-[minmax(0,1fr)_360px]">
-            {/* bonds */}
+          <section className="mt-8">
+            <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+              <div><h2 className="font-display text-xl font-semibold tracking-tight text-bone">Bonds on the Line</h2><p className="mt-1 text-xs text-faint">Commitments backed by CELO and witnessed by the Circle.</p></div>
+              {isMember && <OpenBond circle={circle} onCreated={refreshAll} />}
+            </div>
             <div className="flex flex-col gap-4">
-              <h2 className="font-display text-lg font-semibold tracking-tight text-bone">
-                Bonds on the Line
-              </h2>
               {circleBonds.length === 0 ? (
                 <div className="rounded-xl border border-line bg-panel p-6 text-sm text-faint">
                   No Bonds yet. Be the first to put money on the Line.
@@ -193,21 +198,28 @@ export function CircleDetail({ address: circleAddress }: { address: `0x${string}
                   />
                 ))
               )}
-              <ActivityTimeline circle={circle} bonds={circleBonds} names={names} snapshotEvents={snapshot.data?.activity} />
             </div>
+          </section>
 
-            {/* right rail: create + spend */}
-            <div className="flex flex-col gap-6">
-              {isMember ? (
-                <OpenBond circle={circle} onCreated={refreshAll} />
-              ) : (
-                <div className="rounded-xl border border-line bg-panel p-5 text-xs text-faint">
-                  You&apos;re not in this Circle, so you can watch but not stake.
-                </div>
-              )}
+          <section className="mt-10">
+            <div className="mb-4"><h2 className="font-display text-xl font-semibold tracking-tight text-bone">Circle Treasury</h2><p className="mt-1 text-xs text-faint">Propose and approve how the Circle’s shared Pot is spent.</p></div>
+            <div className={`grid items-start gap-6 ${circlePayouts.length > 0 ? "lg:grid-cols-2" : ""}`}>
               <PayoutPanel circle={circle} onDone={refreshAll} />
               <PayoutList circle={circle} payouts={circlePayouts} onChange={refreshAll} />
             </div>
+          </section>
+
+          <div className="mt-8">
+            <ActivityTimeline circle={circle} bonds={circleBonds} names={names} snapshotEvents={snapshot.data?.activity} />
+          </div>
+
+          <div id="circle-chat" className="mt-10 scroll-mt-6">
+            <div className="mb-3 flex items-center gap-3">
+              <span className="h-px flex-1 bg-line" />
+              <span className="text-[10px] uppercase tracking-[0.22em] text-faint">Member room</span>
+              <span className="h-px flex-1 bg-line" />
+            </div>
+            <CircleChat circle={circle} names={names} profiles={profiles} />
           </div>
         </>
       ) : null}
@@ -224,8 +236,9 @@ function CircleDetailSkeleton() {
         <div className="flex items-start justify-between gap-6"><div className="space-y-3"><div className="h-9 w-56 rounded bg-panel-hi" /><div className="h-3 w-24 rounded bg-panel-hi" /></div><div className="h-16 w-32 rounded bg-panel-hi" /></div>
         <div className="mt-7 h-4 w-48 rounded bg-panel-hi" /><div className="mt-3 flex gap-3"><div className="h-8 w-24 rounded bg-panel-hi" /><div className="h-8 w-24 rounded bg-panel-hi" /></div>
       </section>
-      <div className="mt-8 h-[520px] rounded-xl border border-line bg-panel" />
       <div className="mt-8 grid gap-8 xl:grid-cols-[minmax(0,1fr)_360px]"><div className="space-y-4"><div className="h-6 w-40 rounded bg-panel-hi" /><div className="h-44 rounded-xl border border-line bg-panel" /><div className="h-44 rounded-xl border border-line bg-panel" /></div><div className="space-y-6"><div className="h-40 rounded-xl border border-line bg-panel" /><div className="h-40 rounded-xl border border-line bg-panel" /></div></div>
+      <div className="mt-8 h-64 rounded-xl border border-line bg-panel" />
+      <div className="mt-10 h-[520px] rounded-xl border border-line bg-panel" />
     </div>
   );
 }
