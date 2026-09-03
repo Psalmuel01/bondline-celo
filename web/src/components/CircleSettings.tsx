@@ -15,8 +15,8 @@ import { useWalletSession } from "@/lib/useWalletSession";
 
 export function CircleSettings({ circle, metadata, onMetadata }: {
   circle: Circle;
-  metadata?: CircleMetadata;
-  onMetadata: (metadata: CircleMetadata | undefined) => void;
+  metadata?: CircleMetadata | null;
+  onMetadata: (metadata: CircleMetadata | null) => void;
 }) {
   const { address } = useAccount();
   const { isAuthenticated, isSigningIn, signIn } = useWalletSession();

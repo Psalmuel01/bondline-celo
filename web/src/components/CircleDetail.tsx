@@ -42,11 +42,11 @@ export function CircleDetail({ address: circleAddress }: { address: `0x${string}
     enabled: isSupabaseConfigured,
     initialData: snapshot.data?.metadata,
   });
-  const metadata = metadataQuery.data ?? snapshot.data?.metadata;
+  const metadata = metadataQuery.data !== undefined ? metadataQuery.data : snapshot.data?.metadata;
   const metadataLoading = metadataQuery.isLoading && !snapshot.data;
-  const setCircleMetadata = useCallback((next: CircleMetadata | undefined) => {
+  const setCircleMetadata = useCallback((next: CircleMetadata | null) => {
     queryClient.setQueryData(["circle-metadata", ACTIVE_CHAIN_ID, circleAddress.toLowerCase()], next);
-    queryClient.setQueryData<CircleSnapshot>(circleSnapshotKey(circleAddress), (current) => current ? { ...current, metadata: next } : current);
+    queryClient.setQueryData<CircleSnapshot>(circleSnapshotKey(circleAddress), (current) => current ? { ...current, metadata: next ?? undefined } : current);
   }, [circleAddress, queryClient]);
   // Profile data is preloaded from the dashboard for this exact member list.
   // Bond authors are members, so this keeps the detail route cacheable without

@@ -76,7 +76,10 @@ export async function saveProfile(address: string, profile: { displayName: strin
 
 export async function getCircleMetadata(circleAddress: string) {
   const rows = await request<CircleMetadata[]>(`circle_metadata?select=*&chain_id=eq.${ACTIVE_CHAIN_ID}&circle_address=eq.${circleAddress.toLowerCase()}&limit=1`);
-  return rows[0];
+  // React Query reserves undefined for a missing/invalid query result. A
+  // Circle that has not been customized is a valid empty state, represented
+  // explicitly as null.
+  return rows[0] ?? null;
 }
 
 export async function saveCircleMetadata(circleAddress: string, metadata: { mission: string; potGoal: string; bannerUrl: string }) {
