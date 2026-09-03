@@ -167,6 +167,10 @@ export function CircleDetail({ address: circleAddress }: { address: `0x${string}
             </div>
           </section>
 
+          <div className="mt-8">
+            <CircleChat circle={circle} names={names} profiles={profiles} />
+          </div>
+
           <div className="mt-8 grid gap-8 xl:grid-cols-[minmax(0,1fr)_360px]">
             {/* bonds */}
             <div className="flex flex-col gap-4">
@@ -203,7 +207,6 @@ export function CircleDetail({ address: circleAddress }: { address: `0x${string}
               )}
               <PayoutPanel circle={circle} onDone={refreshAll} />
               <PayoutList circle={circle} payouts={circlePayouts} onChange={refreshAll} />
-              <CircleChat circle={circle} names={names} />
             </div>
           </div>
         </>
@@ -221,6 +224,7 @@ function CircleDetailSkeleton() {
         <div className="flex items-start justify-between gap-6"><div className="space-y-3"><div className="h-9 w-56 rounded bg-panel-hi" /><div className="h-3 w-24 rounded bg-panel-hi" /></div><div className="h-16 w-32 rounded bg-panel-hi" /></div>
         <div className="mt-7 h-4 w-48 rounded bg-panel-hi" /><div className="mt-3 flex gap-3"><div className="h-8 w-24 rounded bg-panel-hi" /><div className="h-8 w-24 rounded bg-panel-hi" /></div>
       </section>
+      <div className="mt-8 h-[520px] rounded-xl border border-line bg-panel" />
       <div className="mt-8 grid gap-8 xl:grid-cols-[minmax(0,1fr)_360px]"><div className="space-y-4"><div className="h-6 w-40 rounded bg-panel-hi" /><div className="h-44 rounded-xl border border-line bg-panel" /><div className="h-44 rounded-xl border border-line bg-panel" /></div><div className="space-y-6"><div className="h-40 rounded-xl border border-line bg-panel" /><div className="h-40 rounded-xl border border-line bg-panel" /></div></div>
     </div>
   );
