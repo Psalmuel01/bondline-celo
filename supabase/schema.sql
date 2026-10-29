@@ -69,8 +69,6 @@ drop policy if exists "public Circle activity read" on public.circle_activity;
 drop policy if exists "public Circle activity write" on public.circle_activity;
 create policy "public profile read" on public.profiles for select using (true);
 create policy "public Circle metadata read" on public.circle_metadata for select using (true);
-create policy "public Circle activity read" on public.circle_activity for select using (true);
-create policy "public Circle activity write" on public.circle_activity for insert with check (true);
 
 drop policy if exists "public Circle media read" on storage.objects;
 drop policy if exists "public Circle media upload" on storage.objects;

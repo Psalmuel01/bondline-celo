@@ -87,15 +87,6 @@ export async function saveCircleMetadata(circleAddress: string, metadata: { miss
   if (!response.ok) { const value = await response.json().catch(() => ({})) as { error?: string }; throw new Error(value.error ?? "Couldn’t save Circle details."); }
 }
 
-export async function getActivity(circleAddress: string) {
-  return request<Activity[]>(`circle_activity?select=*&chain_id=eq.${ACTIVE_CHAIN_ID}&circle_address=eq.${circleAddress.toLowerCase()}&order=created_at.desc&limit=50`);
-}
-
-export async function recordActivity(activity: { circleAddress: string; actorAddress?: string; kind: string; body: string; txHash: string }) {
-  if (!isSupabaseConfigured) return;
-  await request<Activity[]>("circle_activity", { method: "POST", headers: { Prefer: "return=minimal" }, body: JSON.stringify({ chain_id: ACTIVE_CHAIN_ID, circle_address: activity.circleAddress.toLowerCase(), actor_address: activity.actorAddress?.toLowerCase() || null, kind: activity.kind, body: activity.body, tx_hash: activity.txHash }) });
-}
-
 export async function getMessages(circleAddress: string) {
   const response = await fetch(`/api/circles/${circleAddress}/messages`, { credentials: "same-origin" });
   if (!response.ok) throw new Error(response.status === 401 ? "Wallet sign-in required." : "Chat is temporarily unavailable.");
